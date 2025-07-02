@@ -18,6 +18,7 @@ function main() {
   const args = process.argv;
   const skey = parseOrGen(args[2]);
   const vkey = ed.getPublicKey(skey);
+  const vkhHex = hcrypto.blake2b_224(vkey);
   console.log(
     JSON.stringify(
       {
@@ -25,6 +26,7 @@ function main() {
         skeyBech: hcrypto.encodeBech32("ed25519_sk", skey),
         vkeyHex: Buffer.from(vkey).toString("hex"),
         vkeyBech: hcrypto.encodeBech32("ed25519_vk", vkey),
+        vkhHex: Buffer.from(vkhHex).toString("hex"),
       },
       null,
       2,

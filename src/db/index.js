@@ -55,7 +55,7 @@ async function Db(fastify, { config }) {
         res.map((infoOrFail) => {
           if (infoOrFail.kind == "Right") {
             const { iouKey, tag, iouAmt, sig, stage } = infoOrFail.value;
-            const keytag = keys.keytag(iouKey, tag);
+            const keytag = keys.keytag(iouKey, tag).toString("hex");
             const iou = { iouAmt: String(iouAmt), sig: sig.toString("hex") };
             if ("txId" in stage) {
               return [

@@ -1,7 +1,7 @@
 base_url:=env('SUBBIT_MAN_URL', "http://127.0.0.1:7822")
 
 provider_skey_def := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-provider_vkey_def := shell("node ./scripts/mk-key.js $1 | jq '.vkeyHex' | tr -d '\"' ", provider_skey_def )
+provider_vkey_def := shell("node ./scripts/mk-key.js $1 | jq '.vkhHex' | tr -d '\"' ", provider_skey_def )
 currency_def := "Ada"
 close_period_def := "3600000"
 iou_skey_def := "0000000000000000000000000000000000000000000000000000000000000001"
