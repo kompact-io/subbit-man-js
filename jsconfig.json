@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "noStrictGenericChecks": false,
+    "strictPropertyInitialization": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "strictBindCallApply": true,
+    "skipLibCheck": true, // Faster
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "checkJs": true,
+    "allowJs": true,
+    "declaration": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "outDir": "dist"
+  },
+  "verbose": true,
+  "include": ["./src/**/*.js"]
+}

@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://subbit.xyz/schemas/subbit-man",
+  "title": "SubbitMan",
+  "description": "A simple account manager",
+  "$defs": {
+    "vkey": {
+      "description": "Verification key, hex encoded",
+      "type": "string",
+      "contentEncoding": "base16",
+      "pattern": "^([0-9a-fA-f]{64})$"
+    },
+    "vkh": {
+      "description": "Verification key hash, hex encoded",
+      "type": "string",
+      "contentEncoding": "base16",
+      "pattern": "^([0-9a-fA-f]{56})$"
+    },
+    "scriptHash": {
+      "description": "Script hash, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{56})$"
+    },
+    "unit": {
+      "description": "Unit in the sense of the concat of the script hash and asset name, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{2}){28,}$"
+    },
+    "keytag": {
+      "description": "Keytag, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{2}){32,}$"
+    },
+    "provider": {
+      "description": "Provider key, hex encoded",
+      "$ref": "#/$defs/vkh"
+    },
+    "iouKey": {
+      "description": "IOU verification key, hex encoded",
+      "$ref": "#/$defs/vkey"
+    },
+    "signature": {
+      "description": "Signature, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{128})$"
+    },
+    "tag": {
+      "description": "Subbit tag, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{2})*$"
+    },
+    "txId": {
+      "description": "Tx id, hex encoded",
+      "type": "string",
+      "pattern": "^([0-9a-fA-f]{64})$"
+    },
+    "outputIdx": {
+      "description": "outputIdx, int as string",
+      "type": "string",
+      "pattern": "^(([1-9]([0-9])*)||0)$"
+    },
+    "credential": {
+      "description": "Account credential, bytes in base64",
+      "type": "string",
+      "pattern": "^([\\w-]{4})*(?:[\\w-]{4}|[\\w-]{3}=|[\\w-]{2}={2})$"
+    },
+    "amount": {
+      "description": "An amount, positive or negative, in digits",
+      "type": "string",
+      "pattern": "^((-?[1-9]([0-9])*)||0)$"
+    },
+    "posInt": {
+      "description": "A positive integer, in digits",
+      "type": "string",
+      "pattern": "^([1-9]([0-9])*)$"
+    },
+    "ada": {
+      "description": "Currency is Ada",
+      "type": "string",
+      "pattern": "^Ada$"
+    },
+    "byHash": {
+      "description": "Currency by hash, script hash hex encoded",
+      "type": "object",
+      "properties": {
+        "byHash": { "$ref": "#/$defs/scriptHash" }
+      },
+      "required": ["byHash"],
+      "additionalProperties": false
+    },
+    "byClass": {
+      "description": "Currency by class, unit is hex encoded",
+      "type": "object",
+      "properties": {
+        "byClass": { "$ref": "#/$defs/unit" }
+      },
+      "required": ["byClass"],
+      "additionalProperties": false
+    },
+    "currency": {
+      "description": "Either ada, by hash, or by class",
+      "oneOf": [
+        { "$ref": "#/$defs/ada" },
+        { "$ref": "#/$defs/byHash" },
+        { "$ref": "#/$defs/byClass" }
+      ]
+    },
+    "suspendUnsuspend": {
+      "description": "Suspend or unsuspend",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "pattern": "^((suspend)||(unsuspend))$" }
+      },
+      "required": ["kind"],
+      "additionalProperties": false
+    },
+    "time": {
+      "description": "Description of time. Currently support only 'olderThan'",
+      "type": "object",
+      "properties": {
+        "olderThan": { "$ref": "#/$defs/posInt" }
+      },
+      "required": ["olderThan"],
+      "additionalProperties": false
+    },
+    "editMod": {
+      "description": "Mod via an edit",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "pattern": "^mod$" },
+        "by": { "$ref": "#/$defs/amount" }
+      },
+      "required": ["kind", "by"],
+      "additionalProperties": false
+    },
+    "edit": {
+      "description": "An edit is one of: suspend, unsuspend, mod",
+      "oneOf": [
+        { "$ref": "#/$defs/suspendUnsuspend" },
+        { "$ref": "#/$defs/editMod" }
+      ]
+    },
+    "keytags": {
+      "description": "Array of keytags",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/keytag"
+      }
+    },
+    "dropKeytags": {
+      "description": "Drop by keytags",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "pattern": "^keytags$" },
+        "value": { "$ref": "#/$defs/keytags" }
+      },
+      "required": ["kind", "value"],
+      "additionalProperties": false
+    },
+    "dropTime": {
+      "description": "Drop by time",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "pattern": "^time$" },
+        "value": { "$ref": "#/$defs/time" }
+      },
+      "required": ["kind", "value"],
+      "additionalProperties": false
+    },
+    "dropEvents": {
+      "description": "Drop events by time constraint",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "pattern": "^events$" },
+        "value": { "$ref": "#/$defs/time" }
+      },
+      "required": ["kind", "value"],
+      "additionalProperties": false
+    },
+    "l1Subbit": {
+      "description": "L1 subbit content",
+      "type": "object",
+      "properties": {
+        "txId": {
+          "$ref": "#/$defs/txId"
+        },
+        "outputIdx": {
+          "$ref": "#/$defs/outputIdx"
+        },
+        "provider": {
+          "$ref": "#/$defs/provider"
+        },
+        "currency": {
+          "$ref": "#/$defs/currency"
+        },
+        "closePeriod": {
+          "$ref": "#/$defs/posInt"
+        },
+        "iouKey": {
+          "$ref": "#/$defs/iouKey"
+        },
+        "tag": {
+          "$ref": "#/$defs/tag"
+        },
+        "sub": {
+          "$ref": "#/$defs/amount"
+        },
+        "subbitAmt": {
+          "$ref": "#/$defs/amount"
+        }
+      },
+      "required": [
+        "txId",
+        "outputIdx",
+        "provider",
+        "currency",
+        "closePeriod",
+        "iouKey",
+        "tag",
+        "sub",
+        "subbitAmt"
+      ],
+      "additionalProperties": false
+    },
+    "totQuery": {
+      "description": "tot query string",
+      "type": "object",
+      "properties": {
+        "cred": {
+          "$ref": "#/$defs/credential"
+        }
+      },
+      "required": ["cred"],
+      "additionalProperties": false
+    },
+    "totRes": {
+      "description": "tot response. amount as string",
+      "type": "string"
+    },
+    "infoRes": {
+      "description": "info response",
+      "type": "object",
+      "properties": {
+        "cost": {
+          "$ref": "#/$defs/amount"
+        },
+        "iouAmt": {
+          "$ref": "#/$defs/amount"
+        },
+        "sub": {
+          "$ref": "#/$defs/amount"
+        },
+        "subbitAmt": {
+          "$ref": "#/$defs/amount"
+        },
+        "sig": {
+          "$ref": "#/$defs/signature"
+        }
+      },
+      "required": ["cost", "iouAmt", "sub", "subbitAmt", "sig"],
+      "additionalProperties": false
+    },
+    "modQuery": {
+      "description": "mod query string",
+      "type": "object",
+      "properties": {
+        "cred": {
+          "$ref": "#/$defs/credential"
+        },
+        "by": {
+          "description": "amount to modify account",
+          "$ref": "#/$defs/amount"
+        }
+      },
+      "required": ["cred", "by"],
+      "additionalProperties": false
+    },
+    "syncBody": {
+      "description": "Sync body content",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/l1Subbit"
+      }
+    },
+    "editBody": {
+      "description": "Edit body content",
+      "type": "object",
+      "patternProperties": {
+        "^([0-9a-fA-f]{2}){32,}$^": { "$ref": "#/$defs/edit" }
+      }
+    },
+    "dropBody": {
+      "description": "Drop body content",
+      "oneOf": [
+        { "$ref": "#/$defs/dropKeytags" },
+        { "$ref": "#/$defs/dropTime" },
+        { "$ref": "#/$defs/dropEvents" }
+      ]
+    }
+  }
+}
